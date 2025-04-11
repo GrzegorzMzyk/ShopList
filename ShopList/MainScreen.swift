@@ -40,7 +40,7 @@ struct MainScreen: View {
                 
                 
                 .tint(.green)
-                .navigationTitle("Grocery List")
+                .navigationTitle("Lista zakupów")
             }
             .tint(.red)
         }

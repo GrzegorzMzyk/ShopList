@@ -61,6 +61,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    MainScreen()
         .modelContainer(for: Item.self, inMemory: true)
 }
