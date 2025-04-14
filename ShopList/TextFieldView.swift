@@ -39,6 +39,7 @@ struct TextFieldView: View {
                     .foregroundStyle(Color.white)
                     .font(.headline)
             })
+            .disabled(!textIsAppropriate())
         }
         
         .padding()
@@ -51,6 +52,7 @@ struct TextFieldView: View {
     func add() {
         let newItem = Items(nameItem: nameItem)
         context.insert(newItem)
+        nameItem = ""
     }
     func textIsAppropriate() -> Bool {
         if nameItem.count >= 3 {
