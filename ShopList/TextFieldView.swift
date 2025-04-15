@@ -44,12 +44,13 @@ struct TextFieldView: View {
         
         .padding()
         }
-        .background(Color(#colorLiteral(red: 0.5290333033, green: 0.3368754089, blue: 0.9259465337, alpha: 0.565397351)))
+        .background(Color.accentColor)
         
     }
     
     
     func add() {
+        
         let newItem = Items(nameItem: nameItem)
         context.insert(newItem)
         nameItem = ""

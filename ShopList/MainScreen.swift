@@ -12,47 +12,81 @@ import SwiftData
 struct MainScreen: View {
     
     @Environment(\.modelContext) private var context
-    @Query private var itemsToBuy: [Items]
     
-    
+    @Query(filter: #Predicate { !$0.isDone }, sort: \Items.timestamp, order: .reverse)
+    private var itemsToBuy: [Items]
+
+    @Query(filter: #Predicate { $0.isDone }, sort: \Items.timestamp, order: .reverse)
+    private var boughtItems: [Items]
+ 
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    ForEach(itemsToBuy, id: \.self) { fruit in
-                        Text(fruit.nameItem.capitalized)
-                            .font(.caption)
-                            .foregroundStyle(Color.white)
-                            .padding()
-                            .background(Color.pink)
+                    ForEach(itemsToBuy, id: \.self) { items in
+                        TextRowInList(items: items)
+                            .swipeActions(edge: .leading) {
+                                Button {
+                                    markAsBought(items: items)
+                                } label: {
+                                    Label("Na dół", systemImage: "arrow.down")
+                                }
+                            }
                     }
                     .onDelete(perform: delete)
-                    .listRowBackground(Color.green)
-                    
+                    .listRowBackground(Color.accentColor)
                 } header: {
                     HStack {
-                        Text("Zakupy")
+                        Text("Lista")
                         Image(systemName: "list.bullet.clipboard")
                        
                     }
                     .font(.title)
                 }
+                .navigationTitle("Zakupy")
                 
-                
-                .tint(.green)
-                .navigationTitle("Lista zakupów")
+                Section {
+                    ForEach(boughtItems, id: \.self) { items in
+                        TextRowInList(items: items)
+                            .swipeActions(edge: .trailing) {
+                                Button {
+                                               items.isDone = false
+                                           } label: {
+                                               Label("Cofnij", systemImage: "arrow.uturn.left")
+                                           }
+                            }
+                    }
+                    .listRowBackground(Color.gray)
+                } header: {
+                    Label("Kupione", systemImage: "checkmark")
+                        .font(.title2)
+                }
+                  
+             
             }
-            .tint(.red)
+            Button {
+                deleteBoughtItems()
+            } label: {
+                Text("Wyczyść")
+            }
+
         }
+     
         
         Spacer()
         
         TextFieldView()
 
     }
+    func deleteBoughtItems() {
+        for item in boughtItems {
+            context.delete(item)
+        }
+    }
     
-    
-    
+    func markAsBought(items: Items) {
+        items.isDone = true
+    }
 
     
     func delete(indexSet: IndexSet) {
@@ -69,4 +103,17 @@ struct MainScreen: View {
 #Preview {
     MainScreen()
         .modelContainer(for: Items.self, inMemory: true)
+}
+
+
+
+struct TextRowInList: View {
+    let items: Items
+    var body: some View {
+
+        Text(items.nameItem.capitalized)
+            .font(.title2)
+            .foregroundStyle(Color.white)
+            .padding()
+    }
 }
