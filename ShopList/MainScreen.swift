@@ -10,96 +10,41 @@ import SwiftData
 
 
 struct MainScreen: View {
-    
-    @Environment(\.modelContext) private var context
-    
-    @Query(filter: #Predicate { !$0.isDone }, sort: \Items.timestamp, order: .reverse)
-    private var itemsToBuy: [Items]
-
-    @Query(filter: #Predicate { $0.isDone }, sort: \Items.timestamp, order: .reverse)
-    private var boughtItems: [Items]
- 
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    ForEach(itemsToBuy, id: \.self) { items in
-                        TextRowInList(items: items)
-                            .swipeActions(edge: .leading) {
-                                Button {
-                                    markAsBought(items: items)
-                                } label: {
-                                    Label("Na dół", systemImage: "arrow.down")
-                                }
-                            }
+        VStack{
+            NavigationStack {
+                List {
+                    Section {
+                        ShopList()
+                    } header: {
+                        HStack {
+                            Text("Lista")
+                            Image(systemName: "list.bullet.clipboard")
+                        }
+                        .font(.title)
                     }
-                    .onDelete(perform: delete)
-                    .listRowBackground(Color.accentColor)
-                } header: {
-                    HStack {
-                        Text("Lista")
-                        Image(systemName: "list.bullet.clipboard")
-                       
+                    .navigationTitle("Zakupy")
+                    
+                    Section {
+                        PurchasedShopList()
+                    } header: {
+                        Label("Kupione", systemImage: "checkmark")
+                            .font(.title2)
                     }
-                    .font(.title)
                 }
-                .navigationTitle("Zakupy")
                 
-                Section {
-                    ForEach(boughtItems, id: \.self) { items in
-                        TextRowInList(items: items)
-                            .swipeActions(edge: .trailing) {
-                                Button {
-                                               items.isDone = false
-                                           } label: {
-                                               Label("Cofnij", systemImage: "arrow.uturn.left")
-                                           }
-                            }
-                    }
-                    .listRowBackground(Color.gray)
-                } header: {
-                    Label("Kupione", systemImage: "checkmark")
-                        .font(.title2)
+                Button {
+                    PurchasedShopList().deleteBoughtItems()
+                    
+                } label: {
+                    Text("Wyczyść")
                 }
-                  
-             
             }
-            Button {
-                deleteBoughtItems()
-            } label: {
-                Text("Wyczyść")
-            }
-
-        }
-     
-        
-        Spacer()
-        
-        TextFieldView()
-
-    }
-    func deleteBoughtItems() {
-        for item in boughtItems {
-            context.delete(item)
-        }
-    }
-    
-    func markAsBought(items: Items) {
-        items.isDone = true
-    }
-
-    
-    func delete(indexSet: IndexSet) {
-        for index in indexSet {
-            let item = itemsToBuy[index]
-            context.delete(item)
-            
+            Spacer()
+            TextFieldView()
         }
     }
 }
-    
-
-
 #Preview {
     MainScreen()
         .modelContainer(for: Items.self, inMemory: true)
@@ -107,13 +52,99 @@ struct MainScreen: View {
 
 
 
+
+
 struct TextRowInList: View {
     let items: Items
     var body: some View {
-
         Text(items.nameItem.capitalized)
             .font(.title2)
             .foregroundStyle(Color.white)
             .padding()
+    }
+}
+
+struct ShopListViewModel: View {
+    let items: [Items]
+    let swipeEdge: HorizontalEdge
+    let swipeLabel: String
+    let swipeIcon: String
+    let swipeColor: Color
+    let swipeAction: (Items) -> Void
+    let rowBackground: Color
+    let onDelete: ((IndexSet) -> Void)?
+    
+    var body: some View {
+        ForEach(items, id: \.self) { item in
+            TextRowInList(items: item)
+                .swipeActions(edge: swipeEdge) {
+                    Button {
+                        swipeAction(item)
+                    } label: {
+                        Label(swipeLabel, systemImage: swipeIcon)
+                    }
+                    .tint(swipeColor)
+                }
+        }
+        .onDelete(perform: onDelete)
+        .listRowBackground(rowBackground)
+    }
+}
+
+struct ShopList: View {
+    @Environment(\.modelContext) private var context
+    @Query(filter: #Predicate { !$0.isDone }, sort: \Items.timestamp, order: .reverse)
+    private var itemsToBuy: [Items]
+    
+    var body: some View {
+        ShopListViewModel(
+            items: itemsToBuy,
+            swipeEdge: .leading,
+            swipeLabel: "Na dół",
+            swipeIcon: "checkmark.square.fill",
+            swipeColor: .green,
+            swipeAction: { item in
+                markAsBought(items: item)
+            },
+            rowBackground: Color.accentColor,
+            onDelete: delete
+        )
+    }
+    
+    func markAsBought(items: Items) {
+        items.isDone = true
+    }
+    
+    func delete(indexSet: IndexSet) {
+        for index in indexSet {
+            let item = itemsToBuy[index]
+            context.delete(item)
+        }
+    }
+}
+
+
+struct PurchasedShopList: View {
+    @Environment(\.modelContext) private var context
+    @Query(filter: #Predicate { $0.isDone }, sort: \Items.timestamp, order: .reverse)
+    private var boughtItems: [Items]
+    var body: some View {
+        ShopListViewModel(
+            items: boughtItems,
+            swipeEdge: .trailing,
+            swipeLabel: "Cofnij",
+            swipeIcon: "arrow.uturn.left",
+            swipeColor: .orange,
+            swipeAction: { item in
+                item.isDone = false
+            },
+            rowBackground: Color.gray,
+            onDelete: nil
+        )
+    }
+    func deleteBoughtItems() {
+        for item in boughtItems {
+            context.delete(item)
+        }
     }
 }
