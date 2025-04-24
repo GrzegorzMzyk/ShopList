@@ -10,6 +10,8 @@ import SwiftUI
 import SwiftData
 
 struct ShopListViewModel: View {
+    @Query private var itemsToBuy: [Items]
+    
     let items: [Items]
     let swipeEdge: HorizontalEdge
     let swipeLabel: String
@@ -37,9 +39,12 @@ struct ShopListViewModel: View {
 }
 
 
+
 struct ShopList: View {
+    
     @Environment(\.modelContext) private var context
     @Query(filter: #Predicate { !$0.isDone }, sort: \Items.timestamp, order: .reverse)
+    
     private var itemsToBuy: [Items]
     
     var body: some View {
@@ -71,9 +76,12 @@ struct ShopList: View {
 
 
 struct PurchasedShopList: View {
+    
     @Environment(\.modelContext) private var context
     @Query(filter: #Predicate { $0.isDone }, sort: \Items.timestamp, order: .reverse)
+   
     private var boughtItems: [Items]
+    
     var body: some View {
         ShopListViewModel(
             items: boughtItems,
@@ -85,12 +93,24 @@ struct PurchasedShopList: View {
                 item.isDone = false
             },
             rowBackground: Color.gray,
-            onDelete: nil
+            onDelete: deleteBoughtItems
         )
     }
-    func deleteBoughtItems() {
-        for item in boughtItems {
+    
+    func deleteBoughtItems(indexSet: IndexSet) {
+        for index in indexSet {
+            let item = boughtItems[index]
             context.delete(item)
         }
+    }
+}
+
+struct TextRowInList: View {
+    let items: Items
+    var body: some View {
+        Text(items.nameItem.capitalized)
+            .font(.title2)
+            .foregroundStyle(Color.white)
+            .padding()
     }
 }

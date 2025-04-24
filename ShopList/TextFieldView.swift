@@ -12,7 +12,7 @@ import SwiftData
 struct TextFieldView: View {
     
     @Environment(\.modelContext) private var context
-//    @Query private var itemsToBuy: [Items]
+
     
     
     @State private var nameItem: String = ""
@@ -65,4 +65,5 @@ struct TextFieldView: View {
 }
 #Preview {
     TextFieldView()
+        .modelContainer(for: Items.self)
 }

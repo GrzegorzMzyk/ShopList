@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Items {
+final class Items {
     var nameItem: String
     var timestamp: Date
     var isDone: Bool

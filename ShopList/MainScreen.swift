@@ -10,7 +10,9 @@ import SwiftData
 
 
 struct MainScreen: View {
+    
     var body: some View {
+        
         VStack{
             NavigationStack {
                 List {
@@ -34,7 +36,7 @@ struct MainScreen: View {
                 }
                 
                 Button {
-                    PurchasedShopList().deleteBoughtItems()
+                    
                     
                 } label: {
                     Text("Wyczyść")
@@ -47,21 +49,12 @@ struct MainScreen: View {
 }
 #Preview {
     MainScreen()
-        .modelContainer(for: Items.self, inMemory: true)
+        .modelContainer(for: Items.self)
 }
 
 
 
 
 
-struct TextRowInList: View {
-    let items: Items
-    var body: some View {
-        Text(items.nameItem.capitalized)
-            .font(.title2)
-            .foregroundStyle(Color.white)
-            .padding()
-    }
-}
 
 

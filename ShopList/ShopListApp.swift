@@ -12,7 +12,7 @@ import SwiftData
 struct ShopListApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Items.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -26,7 +26,8 @@ struct ShopListApp: App {
     var body: some Scene {
         WindowGroup {
             MainScreen()
+                .modelContainer(for: Items.self)
         }
-        .modelContainer(sharedModelContainer)
+        
     }
 }
