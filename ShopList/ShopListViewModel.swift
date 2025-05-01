@@ -22,7 +22,7 @@ struct ShopListViewModel: View {
     let onDelete: ((IndexSet) -> Void)?
     
     var body: some View {
-        ForEach(items, id: \.self) { item in
+        ForEach(items, id: \.persistentModelID) { item in
             TextRowInList(items: item)
                 .swipeActions(edge: swipeEdge) {
                     Button {
@@ -78,7 +78,7 @@ struct ShopList: View {
 struct PurchasedShopList: View {
     
     @Environment(\.modelContext) private var context
-    @Query(filter: #Predicate { $0.isDone }, sort: \Items.timestamp, order: .reverse)
+    @Query(filter: #Predicate { $0.isDone == true }, sort: \Items.timestamp, order: .reverse)
    
     private var boughtItems: [Items]
     

@@ -15,7 +15,7 @@ final class Items {
     var isDone: Bool
     
     init(nameItem: String, timestamp: Date = Date(), isDone: Bool = false) {
-       self.nameItem = nameItem
+        self.nameItem = nameItem
         self.timestamp = timestamp
         self.isDone = isDone
     }
