@@ -1,23 +1,23 @@
 //
-//  MainScreen.swift
+//  ShopListViewBuilder.swift
 //  ShopList
 //
-//  Created by Grzegorz Mzyk on 07/04/2025.
+//  Created by Grzegorz Mzyk on 06/05/2025.
 //
-
 import SwiftUI
 import SwiftData
 
-
-struct MainScreen: View {
+struct ShopListViewBuilder<ShopListView2: View, PurchasedShopListView2: View>: View {
+    
+    @ViewBuilder var shopList2 :ShopListView2
+    @ViewBuilder var purchasedShopList2: PurchasedShopListView2
     
     var body: some View {
-        
         VStack{
             NavigationStack {
                 List {
                     Section {
-                        ShopList()
+                        shopList2
                     } header: {
                         HStack {
                             Text("Lista")
@@ -28,7 +28,7 @@ struct MainScreen: View {
                     .navigationTitle("Zakupy")
                     
                     Section {
-                        PurchasedShopList()
+                        purchasedShopList2
                     } header: {
                         Label("Kupione", systemImage: "checkmark")
                             .font(.title2)
@@ -46,15 +46,7 @@ struct MainScreen: View {
             TextFieldView()
         }
     }
+    
 }
-#Preview {
-    MainScreen()
-        .modelContainer(for: Items.self)
-}
-
-
-
-
-
 
 

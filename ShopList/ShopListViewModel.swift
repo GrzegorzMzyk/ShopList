@@ -9,9 +9,11 @@
 import SwiftUI
 import SwiftData
 
+
+
 struct ShopListViewModel: View {
-    @Query private var itemsToBuy: [Items]
     
+    @Query private var itemsToBuy: [Items]
     let items: [Items]
     let swipeEdge: HorizontalEdge
     let swipeLabel: String
@@ -36,6 +38,7 @@ struct ShopListViewModel: View {
         .onDelete(perform: onDelete)
         .listRowBackground(rowBackground)
     }
+    
 }
 
 
@@ -114,3 +117,5 @@ struct TextRowInList: View {
             .padding()
     }
 }
+
+

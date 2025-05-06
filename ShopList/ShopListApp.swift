@@ -25,7 +25,7 @@ struct ShopListApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainScreen()
+            PrewiewView()
                 .modelContainer(for: Items.self)
         }
         
